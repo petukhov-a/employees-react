@@ -13,9 +13,9 @@ class App extends Component {
         super(props);
         this.state = {
             data: [
-                {name: "Carl P.", salary: 800, increase: true, id: 1},
-                {name: "Steve J.", salary: 3000, increase: false, id: 2},
-                {name: "Paul T.", salary: 5000, increase: false, id: 3}
+                {name: "Carl P.", salary: 800, increase: true, rise: true, id: 1},
+                {name: "Steve J.", salary: 3000, increase: false, rise: false, id: 2},
+                {name: "Paul T.", salary: 5000, increase: false, rise: false, id: 3}
             ]
         }
         this.maxId = 4;
@@ -36,16 +36,33 @@ class App extends Component {
                     name,
                     salary,
                     increase: false,
+                    rise: false,
                     id: ++this.maxId
                 })
             }
         });
     }
 
-    render() {    
+    onToggleProp = (id, prop) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, [prop]: !item[prop]}
+                }
+                return item;
+            })
+        }));
+    }
+
+    render() {
+        const employees = this.state.data.length;
+        const increased = this.state.data.filter(item => item.increase).length;
+        
         return (
             <div className="app">
-                <AppInfo/>
+                <AppInfo
+                employees={employees}
+                increased={increased}/>
     
                 <div className="search-panel">
                     <SearchPanel/>
@@ -54,7 +71,8 @@ class App extends Component {
     
                 <EmployeesList 
                     data={this.state.data}
-                    onDelete={this.deleteItem}/>
+                    onDelete={this.deleteItem}
+                    onToggleProp={this.onToggleProp}/>
                 <EmployeesAddForm
                     onAdd={this.addItem}/>
             </div>
